@@ -176,4 +176,5 @@ try {
 
 - `!sticker2media` turns a replied sticker into a PNG (transparency becomes white) or, when the WebP is animated, into an H.264 MP4 sent with `gifPlayback`. Frames are extracted with `sharp` and encoded by `ffmpeg` (`src/utils/media/frames-to-video.ts`).
 - `ffmpeg` must be installed (the Dockerfile installs it); set `FFMPEG_PATH` to use another binary. Without it, animated stickers get a friendly error and static ones still work.
+- `!sticker` also accepts videos and GIFs (WhatsApp sends GIFs as videos): `ffmpeg` encodes an animated 512x512 WebP (`libwebp`, at most 10 s) and retries with lower fps/quality until it fits the 500 KB limit (`src/utils/media/video-to-sticker.ts`); the `crop`/`center` options are applied as ffmpeg filters. Shared ffmpeg helpers live in `src/utils/media/ffmpeg.ts`.
 - `!profile-photo [@person]` uses `socket.profilePictureUrl`; it replies with an explanation when the picture is missing or private.

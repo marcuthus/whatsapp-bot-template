@@ -1,13 +1,9 @@
-import { execFile } from "node:child_process"
-import { promisify } from "node:util"
 import fs from "node:fs/promises"
 import path from "node:path"
-import os from "node:os"
 
-const run = promisify(execFile)
+import { runFfmpeg, withTempDirectory } from "./ffmpeg.js"
 
 const framesPerSecond = 25
-const timeoutMs = 60_000
 
 export interface VideoFrame {
     png: Buffer
@@ -27,28 +23,19 @@ export function buildConcatList(frames: VideoFrame[]) {
 }
 
 export async function framesToMp4(frames: VideoFrame[]) {
-    const directory = await fs.mkdtemp(path.join(os.tmpdir(), "sticker-"))
-
-    try {
+    return withTempDirectory(async (directory) => {
         await Promise.all(
             frames.map((frame, index) => fs.writeFile(path.join(directory, `frame-${index}.png`), frame.png))
         )
         await fs.writeFile(path.join(directory, "list.txt"), buildConcatList(frames))
 
-        await run(
-            process.env.FFMPEG_PATH ?? "ffmpeg",
-            [
-                ...["-y", "-hide_banner", "-loglevel", "error"],
-                ...["-f", "concat", "-safe", "0", "-i", "list.txt"],
-                ...["-vf", `fps=${framesPerSecond},scale=trunc(iw/2)*2:trunc(ih/2)*2,format=yuv420p`],
-                ...["-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-an", "-movflags", "+faststart"],
-                "out.mp4"
-            ],
-            { cwd: directory, timeout: timeoutMs }
-        )
+        await runFfmpeg(directory, [
+            ...["-f", "concat", "-safe", "0", "-i", "list.txt"],
+            ...["-vf", `fps=${framesPerSecond},scale=trunc(iw/2)*2:trunc(ih/2)*2,format=yuv420p`],
+            ...["-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-an", "-movflags", "+faststart"],
+            "out.mp4"
+        ])
 
-        return await fs.readFile(path.join(directory, "out.mp4"))
-    } finally {
-        await fs.rm(directory, { recursive: true, force: true })
-    }
+        return fs.readFile(path.join(directory, "out.mp4"))
+    })
 }

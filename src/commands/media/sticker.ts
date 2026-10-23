@@ -3,6 +3,7 @@ import sharp from "sharp"
 import pino from "pino"
 import { z } from "zod"
 
+import { videoToAnimatedSticker } from "../../utils/media/video-to-sticker.js"
 import { Command } from "../../interfaces/command/index.js"
 
 const stickerSize = 512
@@ -50,40 +51,64 @@ export async function createSticker(image: Buffer, options: StickerOptions) {
 export const command: Command<typeof schema> = {
     name: "sticker",
     description:
-        "Cria uma figurinha a partir de uma imagem (legenda ou resposta). Uso: !sticker [crop: true|false|dented] [center: true|false]",
+        "Cria uma figurinha a partir de uma imagem, GIF ou vídeo (legenda ou resposta). Uso: !sticker [crop: true|false|dented] [center: true|false]",
     schema: schema,
     run: async (context, options) => {
         const own = baileys.normalizeMessageContent(context.message.message)
-        const contextInfo = own?.imageMessage?.contextInfo ?? own?.extendedTextMessage?.contextInfo
+        const contextInfo =
+            own?.imageMessage?.contextInfo ?? own?.videoMessage?.contextInfo ?? own?.extendedTextMessage?.contextInfo
         const quoted = baileys.normalizeMessageContent(contextInfo?.quotedMessage)
 
-        const source: baileys.WAMessage | undefined = own?.imageMessage
-            ? context.message
-            : quoted?.imageMessage
-              ? {
-                    key: {
-                        remoteJid: context.jid,
-                        id: contextInfo?.stanzaId,
-                        participant: contextInfo?.participant
-                    },
-                    message: contextInfo?.quotedMessage
-                }
-              : undefined
+        const quotedMessage: baileys.WAMessage = {
+            key: {
+                remoteJid: context.jid,
+                id: contextInfo?.stanzaId,
+                participant: contextInfo?.participant
+            },
+            message: contextInfo?.quotedMessage
+        }
+
+        const [source, isVideo] = own?.imageMessage
+            ? [context.message, false]
+            : own?.videoMessage
+              ? [context.message, true]
+              : quoted?.imageMessage
+                ? [quotedMessage, false]
+                : quoted?.videoMessage
+                  ? [quotedMessage, true]
+                  : [undefined, false]
 
         if (!source) {
-            await context.reply("Envie uma imagem com a legenda !sticker ou responda uma imagem com !sticker.")
+            await context.reply(
+                "Envie uma imagem, GIF ou vídeo com a legenda !sticker ou responda um deles com !sticker."
+            )
             return
         }
 
-        const image = await baileys.downloadMediaMessage(
+        const media = await baileys.downloadMediaMessage(
             source,
             "buffer",
             {},
             { logger: pino({ level: "silent" }), reuploadRequest: context.client.socket.updateMediaMessage }
         )
 
-        const sticker = await createSticker(image, options)
+        if (!isVideo) {
+            const sticker = await createSticker(media, options)
 
-        await context.client.socket.sendMessage(context.jid, { sticker }, { quoted: context.message })
+            await context.client.socket.sendMessage(context.jid, { sticker }, { quoted: context.message })
+            return
+        }
+
+        const sticker = await videoToAnimatedSticker(media, options).catch(async (error: NodeJS.ErrnoException) => {
+            await context.reply(
+                error.code === "ENOENT"
+                    ? "Não foi possível criar o sticker animado: o ffmpeg não está instalado no servidor."
+                    : "Não foi possível criar o sticker animado. Tente um vídeo mais curto ou mais simples."
+            )
+        })
+
+        if (!sticker) return
+
+        await context.client.socket.sendMessage(context.jid, { sticker, isAnimated: true }, { quoted: context.message })
     }
 }
