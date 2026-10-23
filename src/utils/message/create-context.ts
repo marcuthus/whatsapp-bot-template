@@ -32,6 +32,8 @@ export function createContext(client: Client, message: baileys.WAMessage): Exten
         isGroup ? message.key.participantAlt : message.key.remoteJidAlt
     ].filter((id): id is string => !!id)
 
+    const privateJid = senderIds.find((id) => id.endsWith("@s.whatsapp.net")) ?? senderIds[0] ?? jid
+
     async function send(text: string, quoted?: baileys.WAMessage) {
         return client.socket.sendMessage(jid, { text }, { quoted })
     }
@@ -45,10 +47,11 @@ export function createContext(client: Client, message: baileys.WAMessage): Exten
         senderName: message.pushName ?? "usuário",
         isGroup,
         text: extractText(message),
-        args: extractText(message).split(/s+/).slice(1).join(" "),
+        args: extractText(message).trim().split(/\s+/).slice(1).join(" "),
         mentionedJids: extractMentionedJids(message),
         reply: (text) => send(text, message),
         send: (text) => send(text),
+        sendPrivately: (text) => client.socket.sendMessage(isGroup ? privateJid : jid, { text }),
         edit: async (target, text) => {
             await client.socket.sendMessage(jid, { text, edit: target.key })
         },
