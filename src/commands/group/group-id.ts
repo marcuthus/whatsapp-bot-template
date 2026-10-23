@@ -1,7 +1,7 @@
 import { Command } from "../../interfaces/command/index.js"
 
 export const command: Command = {
-    name: "groupid",
+    name: "group-id",
     description: "Mostra o ID do grupo.",
     run: async (context) => {
         if (!context.isGroup) {

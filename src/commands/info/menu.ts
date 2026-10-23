@@ -6,6 +6,7 @@ const categoryLabels: Record<string, string> = {
     info: "ℹ️ Informações",
     example: "🧪 Exemplos",
     group: "👥 Grupo",
+    media: "🖼️ Mídia",
     admin: "🔐 Administração"
 }
 

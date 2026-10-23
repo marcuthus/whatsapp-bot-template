@@ -45,6 +45,7 @@ export function createContext(client: Client, message: baileys.WAMessage): Exten
         senderName: message.pushName ?? "usuário",
         isGroup,
         text: extractText(message),
+        args: extractText(message).split(/s+/).slice(1).join(" "),
         mentionedJids: extractMentionedJids(message),
         reply: (text) => send(text, message),
         send: (text) => send(text),

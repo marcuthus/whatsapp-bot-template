@@ -8,6 +8,8 @@ export interface Command<T extends z.ZodObject = z.ZodObject> {
     name: string
     description: string
     schema?: T
+    // Skips the Argus validation, so free text can be read from `context.args`.
+    rawArguments?: boolean
     run: RunFunc<T>
 }
 

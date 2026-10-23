@@ -40,8 +40,8 @@ export default async (client: Client) => {
                 throw new Error(`Not valid command run on: ${commandFilePath}`)
             }
 
-            if (!/^[a-z0-9_]{1,32}$/.test(command.name)) {
-                const message = `Invalid command name '${command.name}' on: ${commandFilePath}. Only 1-32 lowercase letters, digits and underscores are allowed.`
+            if (!/^[a-z0-9_-]{1,32}$/.test(command.name)) {
+                const message = `Invalid command name '${command.name}' on: ${commandFilePath}. Only 1-32 lowercase letters, digits, hyphens and underscores are allowed.`
                 logger.error(message)
                 throw new Error(message)
             }
@@ -81,13 +81,15 @@ export default async (client: Client) => {
         let options: Record<string, unknown> = {}
 
         try {
-            const props = argus.extractCommandProps(context.text)
+            if (!command.rawArguments) {
+                const props = argus.extractCommandProps(context.text)
 
-            options = argus.validateCommandWithArguments({
-                name: command.name,
-                arguments: props.arguments,
-                schema: command.schema ?? z.object({})
-            }).options
+                options = argus.validateCommandWithArguments({
+                    name: command.name,
+                    arguments: props.arguments,
+                    schema: command.schema ?? z.object({})
+                }).options
+            }
         } catch (error) {
             if (error instanceof ArgusError) {
                 await context.reply(`*Erro de argumentos:*\n\n${error.message}`)

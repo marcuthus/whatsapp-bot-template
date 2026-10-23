@@ -121,7 +121,9 @@ try {
 **Commands Structure:**
 
 - Place commands in `src/commands/<category>/<command-name>.ts`
-- Export a `command` object with `name`, `description`, optional `schema` and a `run` function
+- Export a `command` object with `name` (lowercase letters, digits, `-` or `_`), `description`, optional `schema` and a `run` function
+- Commands that take free text (e.g. a group name) set `rawArguments: true` to skip the Argus validation and read `context.args`
+- Admin-only group commands call `requireGroupAdmin(context)` (`src/utils/command/require-group-admin.ts`), which replies and returns `undefined` when the sender is not a group admin or the bot owner
 - Commands are triggered by the prefix in `configHelper.commands.prefix` (default `!`), e.g. `!sum 1 2`
 - Arguments are positional (`!command arg1 arg2`) and validated with [`@marcuth/argus`](https://www.npmjs.com/package/@marcuth/argus) + `zod`: declare a `schema` (`z.object({...})`) whose keys map to the arguments in order, and type the command as `Command<typeof schema>` to get typed `options` in `run`. Argus/Zod errors are reported to the user automatically
 - `run` receives an `ExtendedContext` with `reply`, `send`, `edit`, `react`, `text`, `sender`, `senderName`, `isGroup` and the `client` (e.g. `context.client.commands`, `context.client.socket`)

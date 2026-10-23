@@ -73,8 +73,13 @@ O prefixo padrão é `!` (veja `src/helpers/config.helper.ts`).
 | `!menu`                | Menu de comandos por categoria. |
 | `!members`             | Lista os membros do grupo e seus IDs. |
 | `!id [@pessoa]`         | Mostra o seu ID ou o da pessoa mencionada. |
-| `!groupid`             | Mostra o ID do grupo. |
-| `!ban @pessoa`         | Bane um membro do grupo (apenas admins). |
+| `!group-id`            | Mostra o ID do grupo. |
+| `!ban-member @pessoa`  | Bane um membro do grupo (apenas admins). |
+| `!add-member <número>` | Adiciona um número ao grupo (apenas admins). |
+| `!invite [número]`     | Link de convite do grupo, ou envia no privado (apenas admins). |
+| `!leave`               | O bot sai do grupo (apenas admins). |
+| `!create-group <nome>` | Cria um grupo e adiciona você (apenas dono). |
+| `!sticker`             | Cria uma figurinha a partir de uma imagem. |
 | `!sum <a> <b> [label]` | Soma dois números (exemplo). |
 
 ## 📜 Scripts Disponíveis
