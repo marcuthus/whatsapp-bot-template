@@ -1,4 +1,5 @@
 import { requireGroupAdmin } from "../../utils/command/require-group-admin.js"
+import { protectionOf } from "../../utils/command/identity.js"
 import { Command } from "../../interfaces/command/index.js"
 
 const batchSize = 50
@@ -32,15 +33,17 @@ export const command: Command = {
 
         if (!metadata) return
 
-        const targets = metadata.participants
-            .filter(
-                (participant) =>
-                    !participant.admin &&
-                    ![participant.id, participant.lid, participant.phoneNumber].some(
-                        (id) => id && context.senderIds.includes(id)
-                    )
+        const targets: string[] = []
+
+        for (const participant of metadata.participants) {
+            const isRequester = [participant.id, participant.lid, participant.phoneNumber].some(
+                (id) => id && context.senderIds.includes(id)
             )
-            .map((participant) => participant.id)
+
+            if (participant.admin || isRequester || (await protectionOf(context, metadata, participant.id))) continue
+
+            targets.push(participant.id)
+        }
 
         if (targets.length === 0) {
             await context.reply("Não há membros para banir: só restam administradores.")

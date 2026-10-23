@@ -1,6 +1,7 @@
 import { z } from "zod"
 
 import { requireGroupAdmin } from "../../utils/command/require-group-admin.js"
+import { protectionOf } from "../../utils/command/identity.js"
 import { Command } from "../../interfaces/command/index.js"
 
 // Arguments are positional: `!ban-member @mention` (the mention itself is read from the message, not from the text)
@@ -20,10 +21,21 @@ export const command: Command<typeof schema> = {
             return
         }
 
-        if (!(await requireGroupAdmin(context))) return
+        const metadata = await requireGroupAdmin(context)
+
+        if (!metadata) return
 
         if (context.senderIds.includes(target)) {
             await context.reply("Você não pode banir a si mesmo.")
+            return
+        }
+
+        const protection = await protectionOf(context, metadata, target)
+
+        if (protection) {
+            await context.reply(
+                protection === "bot" ? "Não posso banir a mim mesmo." : "Não posso banir o meu administrador."
+            )
             return
         }
 

@@ -1,5 +1,5 @@
-import { isBotOwnerId } from "../../utils/command/is-owner-id.js"
 import { Command } from "../../interfaces/command/index.js"
+import { isOwner } from "../../utils/command/identity.js"
 
 export const command: Command = {
     name: "create-group",
@@ -7,7 +7,7 @@ export const command: Command = {
         "Cria um grupo, adiciona você como admin e o trava para admins (apenas dono). Uso: !create-group <nome>",
     rawArguments: true,
     run: async (context) => {
-        if (!isBotOwnerId(context.senderIds)) {
+        if (!(await isOwner(context))) {
             await context.reply("Você não possui permissão para usar este comando.")
             return
         }

@@ -40,7 +40,7 @@ Um template robusto e moderno para criação de bots de WhatsApp utilizando **Ty
     Renomeie o arquivo `.env.example` para `.env` e preencha as variáveis:
 
     ```env
-    # Número do dono, com código do país e sem símbolos
+    # Número do dono, com código do país e sem símbolos (com ou sem o 9 extra do Brasil)
     WHATSAPP_ADMIN_NUMBER=5511999999999
     # Opcional: se definido, o bot gera um código de pareamento em vez de QR code
     WHATSAPP_PAIRING_NUMBER=

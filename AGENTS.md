@@ -178,3 +178,9 @@ try {
 - `ffmpeg` must be installed (the Dockerfile installs it); set `FFMPEG_PATH` to use another binary. Without it, animated stickers get a friendly error and static ones still work.
 - `!sticker` also accepts videos and GIFs (WhatsApp sends GIFs as videos): `ffmpeg` encodes an animated 512x512 WebP (`libwebp`, at most 10 s) and retries with lower fps/quality until it fits the 500 KB limit (`src/utils/media/video-to-sticker.ts`); the `crop`/`center` options are applied as ffmpeg filters. Shared ffmpeg helpers live in `src/utils/media/ffmpeg.ts`.
 - `!profile-photo [@person]` uses `socket.profilePictureUrl`; it replies with an explanation when the picture is missing or private.
+
+## Owner Recognition and Protected Targets
+
+- `WHATSAPP_ADMIN_NUMBER` is compared with `sameNumber` (`src/utils/command/phone.ts`), which ignores symbols and the Brazilian ninth digit (`5511999999999` equals `551199999999`).
+- In groups the sender usually arrives as a LID. `isOwner` (`src/utils/command/identity.ts`) resolves it to a phone number through `signalRepository.lidMapping` and, in groups, through the participant data of the group metadata. Run with the `debug` log level to see which ids were seen when the owner is not recognized.
+- `protectionOf` tells whether a target is the bot itself (`socket.user`) or the owner. `!ban-member` refuses both and `!ban-all-members` skips them.

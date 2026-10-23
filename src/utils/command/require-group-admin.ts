@@ -2,7 +2,7 @@ import * as baileys from "@whiskeysockets/baileys"
 
 import { ExtendedContext } from "../../interfaces/context/index.js"
 
-import { isBotOwnerId } from "./is-owner-id.js"
+import { isOwner } from "./identity.js"
 
 export async function requireGroupAdmin(context: ExtendedContext): Promise<baileys.GroupMetadata | undefined> {
     if (!context.isGroup) {
@@ -20,7 +20,7 @@ export async function requireGroupAdmin(context: ExtendedContext): Promise<baile
             )
     )
 
-    if (!isGroupAdmin && !isBotOwnerId(context.senderIds)) {
+    if (!isGroupAdmin && !(await isOwner(context, metadata))) {
         await context.reply("Você não possui permissão para usar este comando.")
         return undefined
     }
