@@ -3,7 +3,8 @@ import { Command } from "../../interfaces/command/index.js"
 
 export const command: Command = {
     name: "create-group",
-    description: "Cria um grupo e adiciona você (apenas dono). Uso: !create-group <nome>",
+    description:
+        "Cria um grupo, adiciona você como admin e o trava para admins (apenas dono). Uso: !create-group <nome>",
     rawArguments: true,
     run: async (context) => {
         if (!isBotOwnerId(context.senderIds)) {
@@ -20,6 +21,12 @@ export const command: Command = {
 
         const metadata = await context.client.socket.groupCreate(context.args, [owner])
 
-        await context.reply(`Grupo *${metadata.subject}* criado!\nID: \`${metadata.id}\``)
+        await context.client.socket.groupParticipantsUpdate(metadata.id, [owner], "promote")
+        await context.client.socket.groupSettingUpdate(metadata.id, "locked")
+        await context.client.socket.groupMemberAddMode(metadata.id, "admin_add")
+
+        await context.reply(
+            `Grupo *${metadata.subject}* criado!\nID: \`${metadata.id}\`\n\nVocê é administrador. Somente administradores editam os dados do grupo e adicionam membros.`
+        )
     }
 }
