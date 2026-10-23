@@ -1,3 +1,4 @@
+import { parsePrivateReply } from "../../utils/command/parse-private-reply.js"
 import { Command } from "../../interfaces/command/index.js"
 import { Embed } from "../../utils/message/embed.js"
 
@@ -5,8 +6,16 @@ const membersPerMessage = 40
 
 export const command: Command = {
     name: "members",
-    description: "Lista os membros do grupo e revela seus IDs.",
+    description: "Lista os membros do grupo e revela seus IDs. Uso: !members [private-reply: true|false, padrão true]",
+    rawArguments: true,
     run: async (context) => {
+        const { privateReply, rest, invalid } = parsePrivateReply(context.args)
+
+        if (invalid || rest.length > 0) {
+            await context.reply("Uso: !members [private-reply: true|false]")
+            return
+        }
+
         if (!context.isGroup) {
             await context.reply("Este comando só funciona em grupos.")
             return
@@ -28,7 +37,9 @@ export const command: Command = {
                 .setTitle(`👥 ${metadata.subject} (${lines.length} membros)`)
                 .setDescription(page.join("\n"))
 
-            await context.send(membersEmbed.build())
+            await (privateReply ? context.sendPrivately(membersEmbed.build()) : context.send(membersEmbed.build()))
         }
+
+        if (privateReply) await context.react("📩")
     }
 }

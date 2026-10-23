@@ -20,6 +20,8 @@ export interface ExtendedContext {
     mentionedJids: string[]
     reply: (text: string) => Promise<baileys.WAMessage | undefined>
     send: (text: string) => Promise<baileys.WAMessage | undefined>
+    /** Sends the text to the sender in a private chat (in a private chat it is the same as `send`). */
+    sendPrivately: (text: string) => Promise<baileys.WAMessage | undefined>
     edit: (target: baileys.WAMessage, text: string) => Promise<void>
     react: (emoji: string) => Promise<void>
 }
