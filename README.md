@@ -79,7 +79,7 @@ O prefixo padrão é `!` (veja `src/helpers/config.helper.ts`).
 | `!invite [número]`     | Link de convite do grupo, ou envia no privado (apenas admins). |
 | `!leave`               | O bot sai do grupo (apenas admins). |
 | `!create-group <nome>` | Cria um grupo, adiciona você como admin e o trava para admins (apenas dono). |
-| `!sticker`             | Cria uma figurinha a partir de uma imagem. |
+| `!sticker [crop] [center]` | Cria uma figurinha. `crop`: `true` (padrão, preenche e corta), `false` (imagem inteira) ou `dented` (amassada); `center`: `true` (padrão) ou `false` (corta/alinha no canto superior esquerdo). |
 | `!sum <a> <b> [label]` | Soma dois números (exemplo). |
 
 ## 📜 Scripts Disponíveis
