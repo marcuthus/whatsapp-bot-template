@@ -14,6 +14,7 @@ type Listener = (data: never) => unknown
 
 export class Client {
     public commands: Map<string, AnyCommand> = new Map()
+    public commandCategories: Map<string, string> = new Map()
     public socket!: baileys.WASocket
 
     // Listeners are kept here because the socket is recreated on every reconnection.

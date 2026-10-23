@@ -53,6 +53,7 @@ export default async (client: Client) => {
             }
 
             client.commands.set(command.name, command)
+            client.commandCategories.set(command.name, dir)
 
             logger.info(`The command '${command.name}' loaded.`)
         }

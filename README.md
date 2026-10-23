@@ -70,6 +70,10 @@ O prefixo padrão é `!` (veja `src/helpers/config.helper.ts`).
 | ---------------------- | ---------------------------- |
 | `!ping`                | Mostra o ping do bot.        |
 | `!help`                | Lista os comandos.           |
+| `!menu`                | Menu de comandos por categoria. |
+| `!members`             | Lista os membros do grupo e seus IDs. |
+| `!id [@pessoa]`         | Mostra o seu ID ou o da pessoa mencionada. |
+| `!groupid`             | Mostra o ID do grupo. |
 | `!sum <a> <b> [label]` | Soma dois números (exemplo). |
 
 ## 📜 Scripts Disponíveis

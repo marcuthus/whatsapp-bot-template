@@ -14,6 +14,8 @@ export interface ExtendedContext {
     senderName: string
     isGroup: boolean
     text: string
+    /** JIDs (or LIDs) mentioned in the message with @. */
+    mentionedJids: string[]
     reply: (text: string) => Promise<baileys.WAMessage | undefined>
     send: (text: string) => Promise<baileys.WAMessage | undefined>
     edit: (target: baileys.WAMessage, text: string) => Promise<void>

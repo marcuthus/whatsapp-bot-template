@@ -15,6 +15,14 @@ export function extractText(message: baileys.WAMessage) {
     )
 }
 
+export function extractMentionedJids(message: baileys.WAMessage) {
+    const content = baileys.normalizeMessageContent(message.message)
+    const type = content ? baileys.getContentType(content) : undefined
+    const body = type ? (content?.[type] as { contextInfo?: baileys.proto.IContextInfo } | undefined) : undefined
+
+    return body?.contextInfo?.mentionedJid ?? []
+}
+
 export function createContext(client: Client, message: baileys.WAMessage): ExtendedContext {
     const jid = message.key.remoteJid!
     const isGroup = baileys.isJidGroup(jid) === true
@@ -37,6 +45,7 @@ export function createContext(client: Client, message: baileys.WAMessage): Exten
         senderName: message.pushName ?? "usuário",
         isGroup,
         text: extractText(message),
+        mentionedJids: extractMentionedJids(message),
         reply: (text) => send(text, message),
         send: (text) => send(text),
         edit: async (target, text) => {
