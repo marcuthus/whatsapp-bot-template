@@ -82,6 +82,8 @@ O prefixo padrão é `!` (veja `src/helpers/config.helper.ts`).
 | `!everyone [mensagem]` | Menciona todos os membros do grupo (apenas admins). |
 | `!create-group <nome>` | Cria um grupo, adiciona você como admin e o trava para admins (apenas dono). |
 | `!sticker [crop] [center]` | Cria uma figurinha. `crop`: `true` (padrão, preenche e corta), `false` (imagem inteira) ou `dented` (amassada); `center`: `true` (padrão) ou `false` (corta/alinha no canto superior esquerdo). |
+| `!sticker2image` | Transforma um sticker em imagem (responda o sticker com o comando). |
+| `!profile-photo [@pessoa]` | Envia a sua foto de perfil ou a da pessoa mencionada. |
 | `!sum <a> <b> [label]` | Soma dois números (exemplo). |
 
 ## 📜 Scripts Disponíveis
