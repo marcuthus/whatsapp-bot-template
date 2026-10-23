@@ -75,7 +75,7 @@ O prefixo padrão é `!` (veja `src/helpers/config.helper.ts`).
 | `!id [@pessoa]`         | Mostra o seu ID ou o da pessoa mencionada. |
 | `!group-id`            | Mostra o ID do grupo. |
 | `!ban-member @pessoa`  | Bane um membro do grupo (apenas admins). |
-| `!add-member <número>` | Adiciona um número ao grupo (apenas admins). |
+| `!add-member [número]` | Adiciona um número ao grupo, ou todos os contatos da mensagem respondida; informa no final quais falharam (apenas admins). |
 | `!invite [número]`     | Link de convite do grupo, ou envia no privado (apenas admins). |
 | `!leave`               | O bot sai do grupo (apenas admins). |
 | `!create-group <nome>` | Cria um grupo, adiciona você como admin e o trava para admins (apenas dono). |
