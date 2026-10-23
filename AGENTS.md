@@ -169,7 +169,7 @@ try {
 
 ## Private Replies and Mass Actions
 
-- `!id` and `!members` accept `private-reply` (`true` by default): the answer is sent to the sender in a private chat through `context.sendPrivately` and the group message is reacted to with 📩; `false` answers in the group. The flag is parsed by `parsePrivateReply` (`true`, `false` or `private-reply=true|false`), so these commands use `rawArguments`.
+- `!id`, `!members` and `!group-id` accept `private-reply` (`true` by default): the answer is sent to the sender in a private chat through `context.sendPrivately` and the group message is reacted to with 📩; `false` answers in the group. The flag is parsed by `parsePrivateReply` (`true`, `false` or `private-reply=true|false`), so these commands use `rawArguments`.
 - `!ban-all-members` removes every non-admin member (except the sender) in batches of 50 and lists the failures. It does nothing without the `confirm` argument; it only warns how many members would be removed.
 
 ## Media Conversion
