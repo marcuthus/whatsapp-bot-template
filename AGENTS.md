@@ -171,3 +171,9 @@ try {
 
 - `!id` and `!members` accept `private-reply` (`true` by default): the answer is sent to the sender in a private chat through `context.sendPrivately` and the group message is reacted to with 📩; `false` answers in the group. The flag is parsed by `parsePrivateReply` (`true`, `false` or `private-reply=true|false`), so these commands use `rawArguments`.
 - `!ban-all-members` removes every non-admin member (except the sender) in batches of 50 and lists the failures. It does nothing without the `confirm` argument; it only warns how many members would be removed.
+
+## Media Conversion
+
+- `!sticker2media` turns a replied sticker into a PNG (transparency becomes white) or, when the WebP is animated, into an H.264 MP4 sent with `gifPlayback`. Frames are extracted with `sharp` and encoded by `ffmpeg` (`src/utils/media/frames-to-video.ts`).
+- `ffmpeg` must be installed (the Dockerfile installs it); set `FFMPEG_PATH` to use another binary. Without it, animated stickers get a friendly error and static ones still work.
+- `!profile-photo [@person]` uses `socket.profilePictureUrl`; it replies with an explanation when the picture is missing or private.
